@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "loan" ALTER COLUMN "returnDate" DROP NOT NULL,
+ALTER COLUMN "returnDate" SET DATA TYPE DATE;
