@@ -10,4 +10,5 @@ export class BookEntity implements bookModel {
     isbn: string;
     isActive: number;
     publicationYear: number;
+    filename: string;
 }

@@ -8,13 +8,17 @@ import { AuthDto } from './dto/auth.dto';
 export class AuthService {
   constructor(private readonly prisma: PrismaService) { }
 
+  async validateUser(authDto: AuthDto, response: Response) {
+
+  }
+
   async register(authDto: AuthDto, response: Response) {
     const existingUser = await this.prisma.user.findUnique({
       where: { username: authDto.username }
     })
 
     if (existingUser) {
-      return response.status(409).json({ message: "Username is already taken" })
+      return response.status(200).json({ message: "Username is already taken" })
     }
 
     const hashedPassword = await bcrypt.hash(authDto.password, 10)
@@ -33,9 +37,9 @@ export class AuthService {
     const isUserValid = await this.prisma.user.findUnique({
       where: { username: authDto.username }
     })
-
+    
     if (!isUserValid) {
-      return response.status(404).json({ message: "User not found" });
+      return response.status(204).json({ message: "User not found" });
     }
 
     const isPasswordValid = await bcrypt.compare(
@@ -43,7 +47,7 @@ export class AuthService {
     )
 
     if (!isPasswordValid) {
-      return response.status(401).json({ message: "Wrong password" })
+      return response.status(204).json({ message: "Wrong password" })
     }
 
     return response.status(200).json({ message: "Login Successfully" })

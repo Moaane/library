@@ -32,21 +32,22 @@ model book {
   id              String @id @default(uuid())
   title           String
   publisher       String
-  publicationYear Int
+  publicationYear Int    @map(name: "publication_year")
   author          String
   isbn            String
   synopsis        String
   isActive        Int    @default(0) @map(name: "is_active")
   stock           Int?
+  filename        String?
   loan            loan[]
 }
 
 model loan {
-  id         String   @id @default(uuid())
-  loanDate   DateTime @default(now())
+  id         String    @id @default(uuid())
+  loanDate   DateTime  @default(now())
   returnDate DateTime? @db.Date
-  userId     String?  @map(name: "user_id")
-  bookId     String?  @map(name: "book_id")
-  user       user?    @relation(fields: [userId], references: [id])
-  book       book?    @relation(fields: [bookId], references: [id])
+  userId     String?   @map(name: "user_id")
+  bookId     String?   @map(name: "book_id")
+  user       user?     @relation(fields: [userId], references: [id])
+  book       book?     @relation(fields: [bookId], references: [id])
 }

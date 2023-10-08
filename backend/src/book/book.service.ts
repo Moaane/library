@@ -16,7 +16,7 @@ export class BookService {
     return await this.prisma.book.findMany();
   }
 
-  async findAllAsc() {
+  async findAllAsc () {
     const book = await this.prisma.book.findMany({
       orderBy: [
         {

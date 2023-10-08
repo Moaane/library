@@ -16,7 +16,7 @@ export class BookController {
     return this.bookService.findAll();
   }
 
-  @Get()
+  @Get('asc')
   async findAllAsc() {
     return this.bookService.findAllAsc();
   }

@@ -1,49 +1,133 @@
 import React, { useEffect, useState } from 'react'
-import '../../styles/LoginPage.css'
+import '../../styles/AuthPage.css'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 
 
-const LoginPage = () => {
+const AuthPage = () => {
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
-    const [error, setError] = useState('') //
+    const [error, setError] = useState('')
     const navigate = useNavigate()
-
-    // const [error, setError] = useState('')
 
     const handleLogin = async (e) => {
         e.preventDefault()
         try {
 
-        } catch (error) {
+            const cleanedUsername = username.trim();
+            const cleanedPassword = password.trim();
 
+            if (!/^\S+$/.test(cleanedUsername)) {
+                setError('Username cannot contain spaces');
+                setTimeout(() => {
+                    setError('');
+                }, 1500);
+                return;
+            }
+
+            if (!/^\S+$/.test(cleanedPassword)) {
+                setError('Password cannot contain spaces');
+                setTimeout(() => {
+                    setError('');
+                }, 1500);
+                return;
+            }
+
+            const response = await axios.post(`http://10.237.62.101:321/auth/login`, {
+                username: username,
+                password: password
+            })
+
+            if (response.status === 204) {
+                setError('Username or Password is wrong')
+                setTimeout(() => {
+                    setError('')
+                }, 1500)
+            }
+
+            if (response.status === 200) {
+                navigate('/home')
+            }
+
+        } catch (error) {
+            console.error('Error:', error);
+            setError('An error occurred during registration');
+            setTimeout(() => {
+                setError('');
+            }, 1500);
         }
     }
+
+    const handleSignInClick = () => {
+        container.classList.remove("right-panel-active");
+    };
 
     const handleRegister = async (e) => {
         e.preventDefault()
         try {
+
+            const cleanedUsername = username.trim();
+            const cleanedPassword = password.trim();
+
+            if (!/^\S+$/.test(cleanedUsername)) {
+                setError('Username cannot contain spaces');
+                setTimeout(() => {
+                    setError('');
+                }, 1500);
+                return;
+            }
+
+            if (!/^\S+$/.test(cleanedPassword)) {
+                setError('Password cannot contain spaces');
+                setTimeout(() => {
+                    setError('');
+                }, 1500);
+                return;
+            }
+
             if (password.length < 6) {
                 setError('Password Less Than 6 Characters')
+                setTimeout(() => {
+                    setError('');
+                }, 1500);
                 return
             }
+
             if (confirmPassword !== password) {
-                setError('Passwod Salah')
+                setError('Password do not match')
+                setTimeout(() => {
+                    setError('');
+                }, 1500);
                 return
             }
-            const response = await axios.post(`http://10.237.44.16:321/auth/register`, {
+
+            const response = await axios.post(`http://10.237.62.101:321/auth/register`, {
                 username: username,
                 password: password
             })
-            console.log(response.data);  // Add this line
-            
+
+            if (response.status === 200) {
+                setError('Username already in use')
+                setTimeout(() => {
+                    setError('');
+                }, 1500);
+                return
+            }
+
+            if (response.status === 201) {
+                handleSignInClick();
+            }
+
         } catch (error) {
-            console.error(error); // Log any errors for debugging
-            setError('An error occurred during registration'); // 
+            console.error('Error:', error);
+            setError('An error occurred during registration');
+            setTimeout(() => {
+                setError('');
+            }, 1500);
         }
     }
+
 
     useEffect(() => {
         const signUpButton = document.getElementById('signUp');
@@ -61,7 +145,6 @@ const LoginPage = () => {
         signUpButton.addEventListener('click', handleSignUpClick);
         signInButton.addEventListener('click', handleSignInClick);
 
-        // Cleanup event listeners on component unmount
         return () => {
             signUpButton.removeEventListener('click', handleSignUpClick);
             signInButton.removeEventListener('click', handleSignInClick);
@@ -69,7 +152,7 @@ const LoginPage = () => {
     }, []);
 
     return (
-        <>
+        <div className='auth-container'>
             <div className="container" id="container">
                 <div className="form-container sign-up-container">
                     <form onSubmit={handleRegister} >
@@ -77,19 +160,19 @@ const LoginPage = () => {
                         <input className='mt-3' type="text" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} required />
                         <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
                         <input type="password" placeholder="Confirm Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required />
-                        <button type='submit' className='mt-3 button-submit'>Sign Up</button>
-
                         {error && <div className="error-message">{error}</div>}
+                        <button type='submit' className='mt-3 button-submit'>Sign Up</button>
                     </form>
                 </div>
+
                 <div className="form-container sign-in-container">
                     <form onSubmit={handleLogin}>
                         <h1>Sign in</h1>
                         <input className='mt-3' type="username" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} required />
                         <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+                        {error && <div className="error-message">{error}</div>}
                         <a href="#">Forgot your password?</a>
                         <button type='submit'>Sign In</button>
-                        {error && <div className="error-message">{error}</div>}
                     </form>
                 </div>
 
@@ -109,9 +192,8 @@ const LoginPage = () => {
                     </div>
                 </div>
             </div>
-
-        </>
+        </div>
     )
 }
 
-export default LoginPage
+export default AuthPage
