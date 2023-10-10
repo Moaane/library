@@ -1,0 +1,19 @@
+.body-book-list {
+    background-color: whitesmoke;
+    height: 88vh;
+}
+
+.container-book {
+    padding: 1rem;
+    border-radius: 50px;
+    cursor: pointer;
+}
+
+.table {
+    border-radius: 500px;
+}
+
+thead {
+    border-radius: 50px;
+}
+

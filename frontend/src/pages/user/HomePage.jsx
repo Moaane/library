@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import '../styles/HomePage.css'
-import Navbar from '../components/Navbar'
+import '../../styles/HomePage.css'
+import Navbar from '../../components/Navbar'
 import axios from 'axios';
 
 
@@ -8,7 +8,7 @@ const HomePage = () => {
   const [books, setBooks] = useState([]);
 
   useEffect(() => {
-    axios.get('http://10.237.62.101:321/book')
+    axios.get('http://192.168.18.105:321/book')
       .then((response) => {
         setBooks(response.data);
       })
@@ -20,7 +20,7 @@ const HomePage = () => {
   return (
     <>
       <Navbar />
-      <div className="book-list">
+      {/* <div className="book-list">
         <h2>List Buku</h2>
         <ul>
           {books.map((book) => (
@@ -39,7 +39,27 @@ const HomePage = () => {
           ))}
 
         </ul>
+      </div> */}
+      
+      <div className="container-books">
+        {books.map((item, index) => (
+          <div className="books" key={(index + 1)}>
+            <div>
+              <img src={`${item.filename}`} alt="" className="book-img" />
+
+            </div>
+            <div className="descp">
+              <h2 className="book-name">{item.title}</h2>
+              <h3 className="author">{item.author}</h3>
+              <p className="info">
+                {item.synopsis}
+              </p>
+              <button type="submit">See the Book</button>
+            </div>
+          </div>
+        ))}
       </div>
+
     </>
   )
 }

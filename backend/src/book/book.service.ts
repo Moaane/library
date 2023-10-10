@@ -16,7 +16,7 @@ export class BookService {
     return await this.prisma.book.findMany();
   }
 
-  async findAllAsc () {
+  async findAllAsc() {
     const book = await this.prisma.book.findMany({
       orderBy: [
         {
@@ -41,9 +41,9 @@ export class BookService {
     });
   }
 
-  async remove(id: string) {
+  async remove(bookId: string) {
     return await this.prisma.book.delete({
-      where: { id }
+      where: { id: bookId }
     });
   }
 }

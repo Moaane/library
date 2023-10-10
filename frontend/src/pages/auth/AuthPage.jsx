@@ -34,7 +34,7 @@ const AuthPage = () => {
                 return;
             }
 
-            const response = await axios.post(`http://10.237.62.101:321/auth/login`, {
+            const response = await axios.post(`http://192.168.18.105:321/auth/login`, {
                 username: username,
                 password: password
             })
@@ -47,7 +47,9 @@ const AuthPage = () => {
             }
 
             if (response.status === 200) {
-                navigate('/home')
+                setTimeout(() => {
+                    navigate('/home')
+                }, 500)
             }
 
         } catch (error) {
@@ -102,7 +104,7 @@ const AuthPage = () => {
                 return
             }
 
-            const response = await axios.post(`http://10.237.62.101:321/auth/register`, {
+            const response = await axios.post(`http://192.168.18.105:321/auth/register`, {
                 username: username,
                 password: password
             })
