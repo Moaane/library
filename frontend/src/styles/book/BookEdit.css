@@ -1,0 +1,14 @@
+.body-book-edit {
+    height: 88vh;
+}
+
+.formm{
+    width: 100%;
+}
+
+.container-book-edit {
+    margin-top: 20px;
+    background-color: white;
+    padding: 1rem;
+    cursor: pointer;
+}

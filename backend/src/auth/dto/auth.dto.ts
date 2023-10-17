@@ -1,7 +1,12 @@
 import { OmitType } from "@nestjs/mapped-types";
-import { UserEntity } from "../entities/user.entity";
+import { UserEntity } from "src/users/entities/user.entity";
 
-export class AuthDto extends OmitType(UserEntity, []) {
+export class RegisterDto extends OmitType(UserEntity, []) {
+    username:  string
+    password:  string
+}
+
+export class LoginDto extends OmitType(UserEntity, []) {
     username:  string
     password:  string
 }

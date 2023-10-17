@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { findAllBooksApi, deleteBookApi } from '../../../api/BookApi' // Pastikan Anda memiliki fungsi deleteBookApi yang sesuai dengan API Anda
 import '../../../styles/book/BookList.css'
+import { Link } from 'react-router-dom'
 
 const BookList = () => {
     const [books, setBooks] = useState([])
@@ -16,14 +17,11 @@ const BookList = () => {
 
     const handleDelete = async (bookId) => {
         try {
-            // Konfirmasi penghapusan dengan alert
             const confirmDelete = window.confirm('Apakah Anda yakin ingin menghapus buku ini?');
 
             if (confirmDelete) {
-                // Panggil fungsi untuk menghapus buku berdasarkan ID
                 await deleteBookApi(bookId);
 
-                // Hapus buku dari daftar setelah berhasil dihapus
                 setBooks(prevBooks => prevBooks.filter(book => book.id !== bookId));
             }
         } catch (error) {
@@ -38,6 +36,7 @@ const BookList = () => {
     return (
         <div className='body-book-list'>
             <div className="container-book">
+                <Link to="/admin/book/create" className='btn btn-success mb-2 float-end'>Create</Link>
                 <table className="table table-hover">
                     <thead className='table-primary'>
                         <tr>
@@ -63,14 +62,8 @@ const BookList = () => {
                                 <td>{item.stock}</td>
                                 <td>{item.publisher}</td>
                                 <td>{item.publicationYear}</td>
-                                <td>
-                                    <button
-                                        onClick={() => handleDelete(item.id)}
-                                        className='btn btn-danger'
-                                    >
-                                        Delete
-                                    </button>
-                                </td>
+                                <td><Link to={'/admin/book/edit/' + item.id} className='btn btn-primary'>Edit</Link> </td>
+                                <td><button onClick={() => handleDelete(item.id)} className='btn btn-danger'>Delete</button></td>
                             </tr>
                         ))}
                     </tbody>

@@ -1,55 +1,64 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { Response } from 'express';
 import * as bcrypt from 'bcrypt'
-import { AuthDto } from './dto/auth.dto';
+import { JwtService } from '@nestjs/jwt'
+import { LoginDto, RegisterDto } from './dto/auth.dto';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly prisma: PrismaService) { }
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly jwt: JwtService
+  ) { }
 
-  async validateUser(authDto: AuthDto, response: Response) {
-
-  }
-
-  async register(authDto: AuthDto, response: Response) {
-    const existingUser = await this.prisma.user.findUnique({
-      where: { username: authDto.username }
+  async register(registerDto: RegisterDto) {
+    const existingUser = await this.prisma.users.findUnique({
+      where: { username: registerDto.username }
     })
 
     if (existingUser) {
-      return response.status(200).json({ message: "Username is already taken" })
+      throw new BadRequestException("username already in use")
     }
 
-    const hashedPassword = await bcrypt.hash(authDto.password, 10)
+    const hashedPassword = await bcrypt.hash(registerDto.password, 10)
 
-    const user = await this.prisma.user.create({
+    const user = await this.prisma.users.create({
       data: {
-        ...authDto,
+        ...registerDto,
         password: hashedPassword,
       }
     })
 
-    return response.status(201).json({ message: "Register successfully" })
+    const member = await this.prisma.members.create({
+      data: {
+        userId: user.id
+      }
+    })
+
+    return user
   }
 
-  async login(authDto: AuthDto, response: Response) {
-    const isUserValid = await this.prisma.user.findUnique({
-      where: { username: authDto.username }
+  async login(loginDto: LoginDto) {
+    const isUserValid = await this.prisma.users.findUnique({
+      where: { username: loginDto.username }
     })
-    
+
     if (!isUserValid) {
-      return response.status(204).json({ message: "User not found" });
+      throw new NotFoundException("user not found")
     }
 
     const isPasswordValid = await bcrypt.compare(
-      authDto.password, isUserValid.password
+      loginDto.password, isUserValid.password
     )
 
     if (!isPasswordValid) {
-      return response.status(204).json({ message: "Wrong password" })
+      return HttpStatus.UNAUTHORIZED
     }
 
-    return response.status(200).json({ message: "Login Successfully" })
+    const payload = { sub: isUserValid.id, username: isUserValid.username, role: isUserValid.roles }
+
+    return {
+      access_token: await this.jwt.signAsync(payload)
+    }
   }
 }

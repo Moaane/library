@@ -10,44 +10,53 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model customer {
+model members {
   id          String  @id @default(uuid())
-  name        String
-  address     String
-  phoneNumber String  @map(name: "phone_number")
+  name        String?
+  address     String?
+  phoneNumber String? @map(name: "phone_number")
   email       String?
-  user        user?   @relation(fields: [userId], references: [id])
+  users       users?  @relation(fields: [userId], references: [id])
   userId      String? @map(name: "user_id")
 }
 
-model user {
-  id       String     @id @default(uuid())
-  username String     @unique
+model users {
+  id       String @id @default(uuid())
+  username String @unique
   password String
-  customer customer[]
-  loan     loan[]
+
+  loans   loans[]
+  roles   Role      @default(USER)
+  members members[]
 }
 
-model book {
-  id              String @id @default(uuid())
+model books {
+  id              String  @id @default(uuid())
   title           String
   publisher       String
-  publicationYear Int    @map(name: "publication_year")
+  publicationYear Int     @map(name: "publication_year")
   author          String
   isbn            String
   synopsis        String
-  isActive        Int    @default(0) @map(name: "is_active")
+  isActive        Int     @default(1) @map(name: "is_active")
   stock           Int?
   filename        String?
-  loan            loan[]
+  loans           loans[]
 }
 
-model loan {
+model loans {
   id         String    @id @default(uuid())
   loanDate   DateTime  @default(now())
   returnDate DateTime? @db.Date
+  isReturned Boolean   @default(false)
   userId     String?   @map(name: "user_id")
   bookId     String?   @map(name: "book_id")
-  user       user?     @relation(fields: [userId], references: [id])
-  book       book?     @relation(fields: [bookId], references: [id])
+
+  users users? @relation(fields: [userId], references: [id])
+  books books? @relation(fields: [bookId], references: [id])
+}
+
+enum Role {
+  USER
+  ADMIN
 }

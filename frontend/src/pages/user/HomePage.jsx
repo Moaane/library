@@ -2,19 +2,23 @@ import React, { useEffect, useState } from 'react'
 import '../../styles/HomePage.css'
 import Navbar from '../../components/Navbar'
 import axios from 'axios';
+import { findAllBooksApi } from '../../api/BookApi';
 
 
 const HomePage = () => {
   const [books, setBooks] = useState([]);
 
+  const fetchBooks = async () => {
+    try {
+      const result = await findAllBooksApi()
+      setBooks(result.data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   useEffect(() => {
-    axios.get('http://192.168.18.105:321/book')
-      .then((response) => {
-        setBooks(response.data);
-      })
-      .catch((error) => {
-        console.error('Error fetching data:', error);
-      });
+    fetchBooks()
   }, []);
 
   return (

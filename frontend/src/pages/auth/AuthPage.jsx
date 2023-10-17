@@ -174,7 +174,7 @@ const AuthPage = () => {
                         <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
                         {error && <div className="error-message">{error}</div>}
                         <a href="#">Forgot your password?</a>
-                        <button type='submit'>Sign In</button>
+                        <button className='button-submit' type='submit'>Sign In</button>
                     </form>
                 </div>
 
@@ -183,13 +183,13 @@ const AuthPage = () => {
                         <div className="overlay-panel overlay-left">
                             <h1>Welcome Back!</h1>
                             <p>To keep connected with us please login with your personal info</p>
-                            <button className="ghost" id="signIn">Sign In</button>
+                            <button className="ghost button-submit" id="signIn">Sign In</button>
                         </div>
 
                         <div className="overlay-panel overlay-right">
                             <h1>Hello, Friend!</h1>
                             <p>Enter your personal details and start journey with us</p>
-                            <button className="ghost" id="signUp">Sign Up</button>
+                            <button className="ghost button-submit" id="signUp">Sign Up</button>
                         </div>
                     </div>
                 </div>
