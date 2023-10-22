@@ -5,7 +5,9 @@ import { AuthGuard } from 'src/auth/guard/auth.guard';
 import { RolesGuard } from 'src/auth/guard/roles.guard';
 import { Roles } from 'src/auth/roles.decorator';
 import { Role } from '@prisma/client';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('admin')
 @Roles(Role.ADMIN)
 @UseGuards(AuthGuard, RolesGuard)
 @Controller('admins')

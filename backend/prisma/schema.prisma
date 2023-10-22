@@ -16,18 +16,18 @@ model members {
   address     String?
   phoneNumber String? @map(name: "phone_number")
   email       String?
-  users       users?  @relation(fields: [userId], references: [id])
   userId      String? @map(name: "user_id")
+  users       users?  @relation(fields: [userId], references: [id])
 }
 
 model users {
-  id       String @id @default(uuid())
-  username String @unique
-  password String
-
-  loans   loans[]
-  roles   Role      @default(USER)
-  members members[]
+  id           String          @id @default(uuid())
+  username     String          @unique
+  password     String
+  roles        Role            @default(USER)
+  loans        loans[]
+  members      members[]
+  notification notifications[]
 }
 
 model books {
@@ -52,8 +52,19 @@ model loans {
   userId     String?   @map(name: "user_id")
   bookId     String?   @map(name: "book_id")
 
+  users        users?          @relation(fields: [userId], references: [id])
+  books        books?          @relation(fields: [bookId], references: [id])
+  notification notifications[]
+}
+
+model notifications {
+  id      String  @id @default(uuid())
+  message String?
+  userId  String?
+  loanId  String?
+
   users users? @relation(fields: [userId], references: [id])
-  books books? @relation(fields: [bookId], references: [id])
+  loans loans? @relation(fields: [loanId], references: [id])
 }
 
 enum Role {

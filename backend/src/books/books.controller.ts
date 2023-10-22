@@ -5,7 +5,9 @@ import { Roles } from 'src/auth/roles.decorator';
 import { Role } from '@prisma/client';
 import { RolesGuard } from 'src/auth/guard/roles.guard';
 import { CreateBookDto, UpdateBookDto } from './dto/book.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('books')
 @Controller('books')
 export class BooksController {
   constructor(private readonly booksService: BooksService) { }

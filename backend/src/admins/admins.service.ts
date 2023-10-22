@@ -1,8 +1,14 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, UseGuards } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { AdminDto } from './dto/admin.dto';
 import * as bcrypt from 'bcrypt'
+import { RolesGuard } from 'src/auth/guard/roles.guard';
+import { AuthGuard } from 'src/auth/guard/auth.guard';
+import { Roles } from 'src/auth/roles.decorator';
+import { Role } from '@prisma/client';
 
+@Roles(Role.ADMIN)
+@UseGuards(AuthGuard, RolesGuard)
 @Injectable()
 export class AdminsService {
     constructor(private readonly prisma: PrismaService) { }

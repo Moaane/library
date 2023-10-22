@@ -5,7 +5,9 @@ import { Roles } from 'src/auth/roles.decorator';
 import { Role } from '@prisma/client';
 import { UpdateLoanDto } from './dto/loan.dto';
 import { RolesGuard } from 'src/auth/guard/roles.guard';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('loans')
 @UseGuards(AuthGuard, RolesGuard)
 @Controller('loans')
 export class LoansController {
