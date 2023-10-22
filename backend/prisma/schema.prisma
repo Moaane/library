@@ -10,24 +10,24 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model members {
-  id          String  @id @default(uuid())
-  name        String?
-  address     String?
-  phoneNumber String? @map(name: "phone_number")
-  email       String?
-  userId      String? @map(name: "user_id")
-  users       users?  @relation(fields: [userId], references: [id])
-}
-
 model users {
   id           String          @id @default(uuid())
   username     String          @unique
   password     String
   roles        Role            @default(USER)
   loans        loans[]
-  members      members[]
   notification notifications[]
+  members      members?
+}
+
+model members {
+  id          String  @id @default(uuid())
+  name        String?
+  address     String?
+  phoneNumber String? @map(name: "phone_number")
+  email       String?
+  userId      String  @unique
+  users       users   @relation(fields: [userId], references: [id])
 }
 
 model books {
@@ -58,10 +58,11 @@ model loans {
 }
 
 model notifications {
-  id      String  @id @default(uuid())
+  id      String   @id @default(uuid())
   message String?
   userId  String?
   loanId  String?
+  isRead  Boolean? @default(false)
 
   users users? @relation(fields: [userId], references: [id])
   loans loans? @relation(fields: [loanId], references: [id])

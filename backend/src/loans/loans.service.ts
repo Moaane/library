@@ -58,7 +58,7 @@ export class LoansService {
             where: { userId }
         });
 
-        if (member.name === null) {
+        if (!member) {
             throw new BadRequestException('Pastikan mengisi profil terlebih dahulu');
         }
 
@@ -111,6 +111,14 @@ export class LoansService {
                 });
             }
 
+            const notification = await this.prisma.notifications.create({
+                data: {
+                    userId,
+                    loanId: newLoan.id,
+                    message: "Selamat kamu telah berhasil meminjam buku " + book.title,
+                }
+            })
+
             return newLoan;
         });
 
@@ -139,9 +147,16 @@ export class LoansService {
             }
         })
 
-        await this.prisma.books.update({
+        const book = await this.prisma.books.update({
             where: { id: loan.bookId },
             data: { stock: { increment: 1 } }
+        })
+
+        const notification = await this.prisma.notifications.create({
+            data: {
+                userId: loan.userId,
+                message: "Selamat kamu telah berhasil mengembalikan buku " + book.title,
+            }
         })
 
         return returnBook
@@ -151,25 +166,37 @@ export class LoansService {
         const loan = await this.prisma.loans.findUnique({
             where: { id }
         });
-    
+
         if (!loan) {
             throw new NotFoundException('peminjaman tidak ditemukan');
         }
-    
+
         if (loan.isReturned === true) {
             throw new BadRequestException('buku sudah dikembalikan');
         }
-    
+
         const { numberOfDaysToAdd } = updateLoanDto; // asumsikan Anda memiliki field numberOfDaysToAdd di DTO Anda
         const currentDate = new Date(loan.returnDate); // konversi returnDate ke objek Date
         const newReturnDate = addDays(currentDate, numberOfDaysToAdd); // tambahkan jumlah hari
-    
+
         // Perbarui data peminjaman dengan returnDate yang baru
         const updatedLoan = await this.prisma.loans.update({
             where: { id },
             data: { returnDate: newReturnDate }
         });
-    
+
+        const book = await this.prisma.books.findUnique({
+            where: { id: updatedLoan.bookId }
+        })
+
+        const notification = await this.prisma.notifications.create({
+            data: {
+                userId: updatedLoan.userId,
+                loanId: updatedLoan.id,
+                message: "Selamat kamu telah berhasil memperpanjang pinjaman buku " + book.title,
+            }
+        })
+
         return updatedLoan;
     }
 

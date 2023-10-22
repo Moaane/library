@@ -29,9 +29,10 @@ export class AuthService {
       }
     })
 
-    const member = await this.prisma.members.create({
+    const notification = await this.prisma.notifications.create({
       data: {
-        userId: user.id
+        userId: user.id,
+        message: "Selamat Datang"
       }
     })
 

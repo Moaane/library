@@ -30,8 +30,8 @@ export class MembersController {
   @Roles(Role.ADMIN)
   @UseGuards(RolesGuard)
   @Get('find/:userId')
-  async findOne(@Param('userId') userId: string) {
-    return await this.membersService.findOne(userId)
+  async findOneByAdmin(@Param('userId') userId: string) {
+    return await this.membersService.findOneByAdmin(userId)
   }
 
   @Roles(Role.USER, Role.ADMIN)
