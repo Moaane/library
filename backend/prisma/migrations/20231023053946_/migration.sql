@@ -57,6 +57,7 @@ CREATE TABLE "notifications" (
     "message" TEXT,
     "userId" TEXT,
     "loanId" TEXT,
+    "isRead" BOOLEAN DEFAULT false,
 
     CONSTRAINT "notifications_pkey" PRIMARY KEY ("id")
 );

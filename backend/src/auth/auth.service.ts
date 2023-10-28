@@ -1,4 +1,4 @@
-import { BadRequestException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, HttpException, HttpStatus, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt'
 import { JwtService } from '@nestjs/jwt'
@@ -12,14 +12,6 @@ export class AuthService {
   ) { }
 
   async register(registerDto: RegisterDto) {
-    const existingUser = await this.prisma.users.findUnique({
-      where: { username: registerDto.username }
-    })
-
-    if (existingUser) {
-      throw new BadRequestException("username already in use")
-    }
-
     const hashedPassword = await bcrypt.hash(registerDto.password, 10)
 
     const user = await this.prisma.users.create({
@@ -45,7 +37,7 @@ export class AuthService {
     })
 
     if (!isUserValid) {
-      throw new NotFoundException("user not found")
+      throw new UnauthorizedException("Invalid user")
     }
 
     const isPasswordValid = await bcrypt.compare(
@@ -53,7 +45,7 @@ export class AuthService {
     )
 
     if (!isPasswordValid) {
-      return HttpStatus.UNAUTHORIZED
+      throw new UnauthorizedException('password wrong')
     }
 
     const payload = { sub: isUserValid.id, username: isUserValid.username, role: isUserValid.roles }

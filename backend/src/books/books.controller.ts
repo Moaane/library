@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
 import { BooksService } from './books.service';
 import { AuthGuard } from 'src/auth/guard/auth.guard';
 import { Roles } from 'src/auth/roles.decorator';
@@ -17,27 +17,27 @@ export class BooksController {
     return await this.booksService.findAll()
   }
 
-  @Get('find/:id')
-  async findOne(@Param('id') id: string) {
+  @Get('find/:bookId')
+  async findOne(@Param('bookId') id: string) {
     return await this.booksService.findOne(id)
   }
 
   @Roles(Role.ADMIN)
-  @UseGuards(RolesGuard)
+  @UseGuards(AuthGuard, RolesGuard)
   @Post('create')
   async create(@Body() createBookDto: CreateBookDto) {
     return this.booksService.create(createBookDto)
   }
 
   @Roles(Role.ADMIN)
-  @UseGuards(RolesGuard)
-  @Patch('update/:id')
-  async update(@Param('id') id: string, @Body() updateBookDto: UpdateBookDto) {
-    return await this.booksService.update(id, updateBookDto)
+  @UseGuards(AuthGuard, RolesGuard)
+  @Patch('update/:bookId')
+  async update(@Param('bookId') bookId: string, @Body() updateBookDto: UpdateBookDto) {
+    return await this.booksService.update(bookId, updateBookDto)
   }
 
   @Roles(Role.ADMIN)
-  @UseGuards(RolesGuard)
+  @UseGuards(AuthGuard, RolesGuard)
   @Delete('delete/:id')
   async delete(@Param('id') id: string) {
     return await this.booksService.delete(id)

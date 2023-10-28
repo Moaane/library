@@ -6,6 +6,13 @@ import * as bcrypt from 'bcrypt'
 export class UsersService {
   constructor(private readonly prisma: PrismaService) { }
 
+  async checkIfUserExists(username: string) {
+    const existingUser = await this.prisma.users.findUnique({
+      where: { username: username }
+    });
+    return existingUser;
+  }
+
   async findAll() {
     return await this.prisma.users.findMany({
       where: { roles: 'USER' }
